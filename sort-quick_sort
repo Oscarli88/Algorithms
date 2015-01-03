@@ -36,7 +36,7 @@ def quicksort(array, start = 0, end=None):
         idx_pivot = len(array)//2
     else:
         idx_pivot = start 
-#     idx_pivot = end
+#       idx_pivot = end
     i = sub_partition(array, start, end, idx_pivot)
     quicksort(array, start, i - 1)
     quicksort(array, i + 1, end)
