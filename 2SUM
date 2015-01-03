@@ -1,0 +1,59 @@
+# Check whether there exists any pair of data in a file whose sum is within (-10000,10000).
+
+from time import clock
+start = clock()
+
+#In Python, using function is expensive. You can test by yourself.
+def myhash(val):
+    return val >> 15
+    # this equals to val // 2**15
+
+#loading data from the txt file
+f = open('algo1-programming_prob-2sum.txt','r') 
+valnew = [True for x in range(6103503)] #range should be large enough so as to include all hash value
+tlist = [0 for x in range(-10000,10000+1)]  
+tmp = f.read()  
+f.close()  
+print('read complete')  
+
+
+vallist = [int(val) for val in tmp.split()]  
+vallist = set(vallist)  
+print('convert to set@int complete') #set is faster than list
+
+minval = min(vallist)
+
+for val in vallist:  
+    val_key = (val - minval) >> 15  
+    # to make sure that all the hash value are non-negative
+    
+    if valnew[val_key] == True:  
+        valnew[val_key] = [val]  
+    else:  
+        valnew[val_key].append(val) 
+        
+print('hash complete',len(valnew),len(vallist))   
+
+
+for val in vallist:  
+    firkey = (-10000 - val - minval) >> 15  
+    seckey = (10000 - val - minval) >> 15
+    # for any value val2 such that -10000<=val + val2<=10000, -10000-val<= val2 <=10000-val, also 2**15 = 32768. Therefore, 
+    # all the val2 will be in two successive hash cells.
+    
+    if firkey < len(valnew):  
+        if valnew[firkey] != True:  
+            for tmp in valnew[firkey]:  
+                if tmp + val in range(-10000,10000 + 1):  
+                    tlist[tmp + val + 10000] = 1
+  
+    if firkey != seckey:
+        if seckey < len(valnew):  
+            if valnew[seckey] != True:  
+                for tmp in valnew[seckey]:  
+                    if tmp + val in range(-10000,10000 + 1):
+                        tlist[tmp + val + 10000] = 1   
+  
+print('output: ',sum(tlist))  
+end = clock()
+print(end - start)
