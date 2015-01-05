@@ -1,0 +1,26 @@
+def insert_sort(List, descend = True):
+    i = 0
+    while i < len(List):
+        j = i
+        if descend:
+            while j > 0 and List[j] > List[j-1]:
+                temp = List[j-1]
+                List[j - 1] = List[j]
+                List[j] = temp
+                j = j - 1
+        else:
+            while j > 0 and List[j] < List[j-1]:
+                temp = List[j-1]
+                List[j - 1] = List[j]
+                List[j] = temp
+                j = j - 1 
+        i = i + 1
+    return List
+
+A=[1,4,5,4,77,40,7,9,2,40,4,18,27]
+
+print(insert_sort(A,descend = False))
+#[1, 2, 4, 4, 4, 5, 7, 9, 18, 27, 40, 40, 77]
+
+print(insert_sort(A))
+#[77, 40, 40, 27, 18, 9, 7, 5, 4, 4, 4, 2, 1]
