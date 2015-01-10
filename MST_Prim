@@ -1,0 +1,88 @@
+
+from heapq import heappop, heappush
+from time import clock  
+
+source = 'edges.txt'
+f=open(source,'r')  
+
+data = {x:{} for x in range(1,501)}  
+
+for line in f.readlines():  
+    tmp = [int(x) for x in line.split()]  
+    data[tmp[0]][tmp[1]] = tmp[2]
+    data[tmp[1]][tmp[0]] = tmp[2]  
+f.close  
+
+
+
+def prim(dict_a):
+    vertex = [x for x in range(1,501)]
+
+    included = []
+    distance = []
+    
+    root = 1
+    included.append(root)
+    vertex.remove(root)
+    
+    while(len(vertex) > 0):
+        next_node = 1
+        the_key = 1
+        dist = 2**20
+        for vertex_u in included:
+            for vertex_v in data[vertex_u].keys():
+                if (vertex_v not in included) and data[vertex_u][vertex_v] < dist:
+                    dist = data[vertex_u][vertex_v]
+                    next_node = vertex_v
+                    the_key = vertex_u
+        included.append(next_node)
+        vertex.remove(next_node)
+        distance.append(dist)
+        del data[the_key][next_node]        
+    return sum(distance)
+
+
+# start=clock()  
+#  
+# print("穷举法")
+# print(prim(data))
+#  
+# end = clock()
+# print(end - start) 
+
+
+def prim_heap(dict_a):
+    vertex = [x for x in range(1,501)]
+     
+    included = []
+    distance = []
+     
+    root = 1
+    included.append(root)
+    vertex.remove(root)
+     
+    node_heap = []
+     
+    while len(vertex) > 0:
+        node_now = included[-1]
+        for vertex_v in data[node_now]:
+            if vertex_v not in included:
+                dist = data[node_now][vertex_v]
+                heappush(node_heap, [dist,node_now,vertex_v])
+        item = heappop(node_heap) 
+        
+        while item[2] in included:
+            item = heappop(node_heap)
+        node = item[2]
+        included.append(node)
+        vertex.remove(node)
+        distance.append(item[0])
+    return sum(distance)
+
+start=clock()  
+ 
+print("heap method")
+print(prim_heap(data))
+ 
+end = clock()
+print(end - start) 
