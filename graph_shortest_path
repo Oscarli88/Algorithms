@@ -1,3 +1,5 @@
+#set a start point, find the shortest path length from the starting point to any other point
+
 f = open('dijkstraData.txt','r')  
 vertices = {}
 for line in f.readlines():
@@ -10,7 +12,7 @@ for x in tmp[1:]}
 f.close()
 
 length = 200
-exped = [1]
+exped = [1] # set 1 as the starting point in this example
 noexped=list(range(2,length+1))
 distance = {x : 0 for x in range(1,length + 1)}
 
