@@ -1,15 +1,24 @@
+#count is used to record the number of inversions. Don't have to count comparisons one-by-one. 
+#When there is a recursive call on a subarray of length m, you should simply add m−1 to your running total of comparisons. 
+
+#there are three ways of choosing pivot:
+#1. Choose the first
+#2. Choose the last
+#3. Choose the median of three numbers, that is first, middle and last.
+
 count = 0
 
-def sub_partition(array, start, end, idx_pivot):   
-    global count    
+# this function will sort the array by pivot and then return the position of the pivot after sorting.
+def sub_partition(array, start, end, idx_pivot):     
     if not (start <= idx_pivot <= end):
         raise ValueError('idx pivot must be between start and end')
-
+        
     array[start], array[idx_pivot] = array[idx_pivot], array[start]
+    # swap the first element with pivot so that pivot will be in the first place.
     pivot = array[start]
     i = start + 1
     j = start + 1
-
+    
     while j <= end:
         if array[j] <= pivot:
             array[j], array[i] = array[i], array[j]
@@ -17,26 +26,36 @@ def sub_partition(array, start, end, idx_pivot):
         j += 1
 
     array[start], array[i - 1] = array[i - 1], array[start]
-    count = count + end - start
     return i - 1
 
-def quicksort(array, start = 0, end=None):
-    if end is None:
-        end = len(array) - 1
-    if end - start < 1:
-        return
+def quicksort(array, start = 0, end = None):
+    global count
+    if end is None: end = len(array) - 1
+    if end - start < 1: return
     
     a = array[start]
     b = array[end]
-    c = array[len(array)//2]
+    mid = int((end - start)/2) + start
+    c = array[mid]
     
-    if (a > b and b > c) or (c > b and b > a):
-        idx_pivot = end
-    elif (a > c and c > b) or (b > c and c > a):
-        idx_pivot = len(array)//2
-    else:
-        idx_pivot = start 
-#       idx_pivot = end
+    if (a >= b and b >= c) or (c >= b and b >= a): idx_pivot = end
+    elif (a >= c and c >= b) or (b >= c and c >= a): idx_pivot = mid
+    else: idx_pivot = start 
+        
+#    idx_pivot = start #use this code to choose the pivot when choosing the first number or the last number
+
     i = sub_partition(array, start, end, idx_pivot)
+    count = count + (i - start) + (end - i)
+    
     quicksort(array, start, i - 1)
     quicksort(array, i + 1, end)
+                
+
+ins = open("QuickSort.txt","r")
+array = []
+for line in ins:
+    array.append(int(line))
+ins.close
+
+quicksort(array, 0, None)
+print(count)
