@@ -1,0 +1,28 @@
+count = 0
+
+def merge_sort(List):
+    mid = int(len(List)/2)
+    if len(List) <= 1: return List
+    return merge(merge_sort(List[:mid]),merge_sort(List[mid:]))
+
+def merge(a,b):
+    global count
+    final = []
+    while a and b:
+        if a[0] < b[0]:
+            final.append(a.pop(0))
+        else:
+            final.append(b.pop(0))
+            count += len(a)
+    return final + a + b
+
+#loading data 
+ins = open("IntegerArray.txt","r")
+array = []
+for line in ins:
+    array.append(int(line))
+ins.close
+print(len(array))
+
+merge_sort(array)
+print(count)
