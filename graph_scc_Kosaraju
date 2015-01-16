@@ -1,0 +1,80 @@
+'''
+1.Variables
+1) maplength: number of vertexes
+2) mapDict: a dict recording the directed graph, with key as the starting point and value as the end point
+3) mapDictT: a dict recording the reversed directed graph
+4) isexplored: used in the first DFS to record whether the vertex has been explored or not. default is False
+5) secisexplored: used in the second DFS to record whether the vertex has been explored or not. default is False
+6) visitordered: a list to record the topological order with length of maplength. The first finished vertex will be put at
+                 visitordered[maplength - 1] with value of the vertex's number. Since they are recorded in a descending way,
+                 the second DFS will be proceed from visitordered[0] to visitorordered[maplength].
+7) header: a list to record the number of components in that cycle starting from a specified vertex. default value is zero.
+           If a vertex is not the starting point of the cycle, then the value will still be zero at end.
+8) fs = maplength
+9) s: used in the second DFS to represent the starting point of a new cycle.
+
+2. Functions
+1) firstdfs(vertex): the first round DFS to record the finishing time of each vertex. 
+2) seconddfs(vertex): the second round DFS according to the reverse order of the finishing time of the first DFS.
+                Also, it will count the number of vertex in a cycle (specified by s)
+3) sccmain(): Load data to create mapDict and mapDictT, then run the main procedure.
+'''
+
+import sys,threading  
+sys.setrecursionlimit(3000000)  
+threading.stack_size(67108864)  
+  
+def firstdfs(vertexind):  
+    global fs,isexplored,visitordered,mapDictT  
+    if len(mapDictT[vertexind]) > 0:  
+        for ind in mapDictT[vertexind]:  
+            if not isexplored[ind - 1]:  
+                isexplored[ind - 1] = True  
+                firstdfs(ind)  
+    visitordered[fs - 1] = vertexind    
+    fs = fs - 1  
+  
+def seconddfs(vertexind):  
+    global s, secisexplored, header, mapDict  
+    if len(mapDict[vertexind]) == 0:return  
+    for ind in mapDict[vertexind]:  
+        if not secisexplored[ind - 1]:  
+            secisexplored[ind - 1] = True  
+            seconddfs(ind)  
+    header[s - 1] += 1  
+  
+def sccmain():  
+    global mapDict, mapDictT, fs, isexplored, visitordered, s, secisexplored, header  
+    maplength = 875714  
+    f = open('SCC.txt','r')  
+    mapDict = {x:[] for x in range(1,maplength + 1)}  
+    mapDictT = {x:[] for x in range(1,maplength + 1)}  
+    for line in f.readlines():  
+        tmp = [int(x) for x in line.split()]  
+        mapDict[tmp[0]].append(tmp[1])  
+        mapDictT[tmp[1]].append(tmp[0])  
+    f.close  
+  
+    fs = maplength  
+    isexplored = [False for x in range(1,maplength + 1)]  
+    secisexplored = [False for x in range(1,maplength + 1)]  
+    visitordered = [0 for x in range(1,maplength + 1)]  
+    header = [0 for x in range(1,maplength + 1)]  
+  
+    for ind in range(1,maplength + 1):  
+        if not isexplored[ind - 1]:   
+            isexplored[ind - 1] = True  
+            firstdfs(ind)  
+    print('Second DFS')  
+    for ind in visitordered:  
+        if not secisexplored[ind - 1]:  
+            s = ind  
+            secisexplored[ind - 1] = True  
+            seconddfs(ind)  
+  
+    header.sort(reverse = True)  
+    print(header[0:20])  
+  
+if __name__ == '__main__':  
+    thread=threading.Thread(target = sccmain)  
+    thread.start()  
