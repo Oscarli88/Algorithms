@@ -4,7 +4,7 @@ from time import clock
 start=clock()
 
 #1.Loading data
-f = open('dijkstraData.txt','r')  
+f = open('****.txt','r')  
 vertices = {}
 for line in f.readlines():
     tmp = line.split()
