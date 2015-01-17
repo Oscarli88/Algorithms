@@ -1,4 +1,8 @@
-#set a start point, find the shortest path length from the starting point to any other point
+'''
+set a start point, find the shortest path length from the starting point to any other point
+Data:in each line, the first number is the vertex. For example, in the first line, 1 is a vertex. 80,982 means there is a edge
+between 1 and 80 whose weight is 982
+'''
 
 from time import clock  
 start=clock()
