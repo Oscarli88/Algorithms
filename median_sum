@@ -1,0 +1,55 @@
+'''
+1. Goal
+    The data is a stream of numbers,arriving one by one. Suppose we have 10000 numbers, then during the process of adding data one
+by one, there will be 10000 medians. The task is to sum those 10000 medians.
+2. Idea
+    Use heap data structure since the heap[0] will alawys be the smallest number of the heap.
+    Suppose we seperate the data into two heaps, left and right. The left heap will keep the smaller values and the length of 
+left heaps will always be equal to or more than one than the length of the right heap, then the biggest value of the left heap
+will always be the median.
+    Since the heap[0] stores the smallest value, in order to use heappop() to return the biggest value of the left heap, we 
+can store every value in its negative sign. Hence, the smallest value of the left heap will actually be the biggest value of
+the left heap.
+3. Function
+  1) readdata(filename): loading data from a txt file. In the txt file, each line has a number. This function will return a 
+                         list containing all the numbers and another list named 'out' with default value zero and will record
+                         all the median values.
+  2) headway(data, out): this function will record every median in the process. 
+'''
+
+from heapq import heappush, heappop
+
+def readdata(filename):
+    f = open(filename, 'r')
+    tmp = f.read()
+    f.close
+    data = [int(val) for val in tmp.split()]
+    out = [0 for x in range(len(data))]
+    return data, out
+
+def heapway(data, out):
+    lheap = []
+    rheap = []
+    out[0] = data[0]
+    temp = sorted(data[0:2])
+    out[1] = temp[0]
+    heappush(lheap, -temp[0])
+    heappush(rheap, temp[1])
+    for ind in range(2, len(data)):
+        if data[ind] > rheap[0]:
+            heappush(rheap, data[ind])
+        else:
+            heappush(lheap, -data[ind])
+        
+        if len(rheap) > len(lheap):
+            heappush(lheap, -heappop(rheap))
+        if len(lheap) > len(rheap) + 1:
+            heappush(rheap, -heappop(lheap))
+        
+        out[ind] = -lheap[0]
+    return sum(out)%10000
+
+source = 'Median.txt'
+data, out = readdata(source)    
+print(heapway(data, out))
+            
